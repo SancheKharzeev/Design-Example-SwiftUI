@@ -17,6 +17,7 @@ struct ContentView: View {
     @State var viewState = CGSize.zero // переменная для возможности передвижения карточек
     @State var showCard = false
     @State var bottomState = CGSize.zero // переменная для возможности передвижения карточек
+    @State var showFull = false
     
     var body: some View {
         ZStack {
@@ -120,30 +121,40 @@ struct ContentView: View {
                             self.show = false
                         }
                 )
-            Text("\(bottomState.height)").offset(y: -300)
+            Text("\(bottomState.height)").offset(y: -340)
+            Text("\(self.showFull.description)").offset(y: -325)
             
             BottomCardView()
-                .offset(y: bottomState.height)
+                
                 .blur(radius: show ? 20 : 0)
                 .animation(.default, value: show)
                 .animation(.default, value: bottomState)
+                
                 .offset(x: 0, y:showCard ? 400 : 1000) // при нажатии на карточку выходит нижняя карточка
-            
                 .animation(.timingCurve(0.2, 0.8, 0.2, 1, duration: 0.8), value: showCard)
+                .offset(y: bottomState.height)
+            
                 .gesture( // модификатор перетаскивания
                     DragGesture().onChanged { value in
                         self.bottomState = value.translation // значение места расположения будет передаваться в свойство viewState
-                        
+                        if self.showFull {
+                            self.bottomState.height += -300
+                        }
+                        if self.bottomState.height < -300 {
+                            self.bottomState.height = -300
+                        }
                     }
                         .onEnded { value in
                             if self.bottomState.height > 50 {
                                 self.showCard = false
                             }
-                            if self.bottomState.height < -50 {
+                            if (self.bottomState.height < -100 && !self.showFull) || (self.bottomState.height < -250 && self.showFull) {
                                 self.bottomState.height = -300
+                                self.showFull = true
                                     
                             } else {
                                 self.bottomState = .zero
+                                self.showFull = false
                             }
                             
                         }
