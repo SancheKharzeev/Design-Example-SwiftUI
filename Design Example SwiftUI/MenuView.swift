@@ -78,7 +78,10 @@ struct MenuRow: View {
             
             Text(title)
                 .font(.system(size: 20, weight: .bold, design: .rounded))
-                .frame(width: 120, alignment: .leading)
+                .frame(width: 170, alignment: .center)
+                .background(Color(.black).opacity(0.1))
+                .cornerRadius(5) // скругление углов
+                
         }
     }
 }
